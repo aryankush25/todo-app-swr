@@ -12,7 +12,8 @@ import Box from '@material-ui/core/Box';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
-import Copyright from '../../components/shared/Copyright/index.js';
+import Copyright from '../../components/Copyright';
+import SpinnerAdornment from '../../components/shared/SpinnerAdornment';
 import { useFormStyles } from '../../styles/formStyles';
 import { isPresent } from '../../utils/helper';
 
@@ -29,13 +30,21 @@ const Login = () => {
     register,
     handleSubmit,
     errors,
-    formState: { isValid }
+    formState: { isValid, isSubmitting }
   } = useForm({
     mode: 'onBlur',
     reValidateMode: 'onChange',
     resolver: joiResolver(schema)
   });
-  const onSubmit = (data) => console.log(data);
+
+  const onSubmit = (data) => {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve();
+        console.log(data);
+      }, 2000);
+    });
+  };
 
   return (
     <Container component="main" maxWidth="xs">
@@ -63,6 +72,7 @@ const Login = () => {
             inputRef={register}
             error={isPresent(errors.email)}
             helperText={errors.email && 'Email is required'}
+            disabled={isSubmitting}
           />
           <TextField
             variant="outlined"
@@ -77,6 +87,7 @@ const Login = () => {
             inputRef={register}
             error={isPresent(errors.password)}
             helperText={errors.password && 'Password is required'}
+            disabled={isSubmitting}
           />
 
           <Button
@@ -85,9 +96,10 @@ const Login = () => {
             variant="contained"
             color="primary"
             className={classes.submit}
-            disabled={!isValid}
+            disabled={!isValid || isSubmitting}
           >
             Sign In
+            {isSubmitting && <SpinnerAdornment />}
           </Button>
           <Grid container>
             <Grid item xs>

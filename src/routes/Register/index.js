@@ -12,7 +12,8 @@ import Box from '@material-ui/core/Box';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
-import Copyright from '../../components/shared/Copyright/index.js';
+import Copyright from '../../components/Copyright';
+import SpinnerAdornment from '../../components/shared/SpinnerAdornment';
 import { useFormStyles } from '../../styles/formStyles';
 import { isPresent } from '../../utils/helper';
 
@@ -31,14 +32,21 @@ const Register = () => {
     register,
     handleSubmit,
     errors,
-    formState: { isValid }
+    formState: { isValid, isSubmitting }
   } = useForm({
     mode: 'onBlur',
     reValidateMode: 'onChange',
     resolver: joiResolver(schema)
   });
 
-  const onSubmit = (data) => console.log(data);
+  const onSubmit = (data) => {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve();
+        console.log(data);
+      }, 2000);
+    });
+  };
 
   return (
     <Container component="main" maxWidth="xs">
@@ -67,6 +75,7 @@ const Register = () => {
                 inputRef={register}
                 error={isPresent(errors.firstName)}
                 helperText={errors.firstName && 'First Name is required'}
+                disabled={isSubmitting}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -81,6 +90,7 @@ const Register = () => {
                 inputRef={register}
                 error={isPresent(errors.lastName)}
                 helperText={errors.lastName && 'Last Name is required'}
+                disabled={isSubmitting}
               />
             </Grid>
             <Grid item xs={12}>
@@ -95,6 +105,7 @@ const Register = () => {
                 inputRef={register}
                 error={isPresent(errors.email)}
                 helperText={errors.email && 'Email is required'}
+                disabled={isSubmitting}
               />
             </Grid>
             <Grid item xs={12}>
@@ -110,6 +121,7 @@ const Register = () => {
                 inputRef={register}
                 error={isPresent(errors.password)}
                 helperText={errors.password && 'Password is required'}
+                disabled={isSubmitting}
               />
             </Grid>
           </Grid>
@@ -119,9 +131,10 @@ const Register = () => {
             variant="contained"
             color="primary"
             className={classes.submit}
-            disabled={!isValid}
+            disabled={!isValid || isSubmitting}
           >
             Sign Up
+            {isSubmitting && <SpinnerAdornment />}
           </Button>
           <Grid container justify="flex-end">
             <Grid item>
