@@ -1,5 +1,8 @@
 import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import { joiResolver } from '@hookform/resolvers';
+import Joi from '@hapi/joi';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
@@ -11,9 +14,31 @@ import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
 import Copyright from '../../components/shared/Copyright/index.js';
 import { useFormStyles } from '../../styles/formStyles';
+import { isPresent } from '../../utils/helper';
+
+const schema = Joi.object({
+  firstName: Joi.string().required(),
+  lastName: Joi.string().required(),
+  email: Joi.string()
+    .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } })
+    .required(),
+  password: Joi.string().required()
+});
 
 const Register = () => {
   const classes = useFormStyles();
+  const {
+    register,
+    handleSubmit,
+    errors,
+    formState: { isValid }
+  } = useForm({
+    mode: 'onBlur',
+    reValidateMode: 'onChange',
+    resolver: joiResolver(schema)
+  });
+
+  const onSubmit = (data) => console.log(data);
 
   return (
     <Container component="main" maxWidth="xs">
@@ -24,7 +49,11 @@ const Register = () => {
         <Typography component="h1" variant="h5">
           Sign up
         </Typography>
-        <form className={classes.form} noValidate>
+        <form
+          className={classes.form}
+          noValidate
+          onSubmit={handleSubmit(onSubmit)}
+        >
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
               <TextField
@@ -35,7 +64,9 @@ const Register = () => {
                 fullWidth
                 id="firstName"
                 label="First Name"
-                autoFocus
+                inputRef={register}
+                error={isPresent(errors.firstName)}
+                helperText={errors.firstName && 'First Name is required'}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -47,6 +78,9 @@ const Register = () => {
                 label="Last Name"
                 name="lastName"
                 autoComplete="lname"
+                inputRef={register}
+                error={isPresent(errors.lastName)}
+                helperText={errors.lastName && 'Last Name is required'}
               />
             </Grid>
             <Grid item xs={12}>
@@ -58,6 +92,9 @@ const Register = () => {
                 label="Email Address"
                 name="email"
                 autoComplete="email"
+                inputRef={register}
+                error={isPresent(errors.email)}
+                helperText={errors.email && 'Email is required'}
               />
             </Grid>
             <Grid item xs={12}>
@@ -70,6 +107,9 @@ const Register = () => {
                 type="password"
                 id="password"
                 autoComplete="current-password"
+                inputRef={register}
+                error={isPresent(errors.password)}
+                helperText={errors.password && 'Password is required'}
               />
             </Grid>
           </Grid>
@@ -79,6 +119,7 @@ const Register = () => {
             variant="contained"
             color="primary"
             className={classes.submit}
+            disabled={!isValid}
           >
             Sign Up
           </Button>

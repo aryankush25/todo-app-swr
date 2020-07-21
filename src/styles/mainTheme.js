@@ -7,7 +7,7 @@ import lightBlue from '@material-ui/core/colors/lightBlue';
 
 const mainTheme = createMuiTheme({
   palette: {
-    type: 'light',
+    type: 'dark',
     primary: blue,
     secondary: lightBlue
   }

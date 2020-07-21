@@ -1,10 +1,11 @@
 import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import { joiResolver } from '@hookform/resolvers';
+import Joi from '@hapi/joi';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
 import Link from '@material-ui/core/Link';
 import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
@@ -13,9 +14,28 @@ import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
 import Copyright from '../../components/shared/Copyright/index.js';
 import { useFormStyles } from '../../styles/formStyles';
+import { isPresent } from '../../utils/helper';
+
+const schema = Joi.object({
+  email: Joi.string()
+    .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } })
+    .required(),
+  password: Joi.string().required()
+});
 
 const Login = () => {
   const classes = useFormStyles();
+  const {
+    register,
+    handleSubmit,
+    errors,
+    formState: { isValid }
+  } = useForm({
+    mode: 'onBlur',
+    reValidateMode: 'onChange',
+    resolver: joiResolver(schema)
+  });
+  const onSubmit = (data) => console.log(data);
 
   return (
     <Container component="main" maxWidth="xs">
@@ -26,7 +46,11 @@ const Login = () => {
         <Typography component="h1" variant="h5">
           Log in
         </Typography>
-        <form className={classes.form} noValidate>
+        <form
+          className={classes.form}
+          noValidate
+          onSubmit={handleSubmit(onSubmit)}
+        >
           <TextField
             variant="outlined"
             margin="normal"
@@ -36,7 +60,9 @@ const Login = () => {
             label="Email Address"
             name="email"
             autoComplete="email"
-            autoFocus
+            inputRef={register}
+            error={isPresent(errors.email)}
+            helperText={errors.email && 'Email is required'}
           />
           <TextField
             variant="outlined"
@@ -48,17 +74,18 @@ const Login = () => {
             type="password"
             id="password"
             autoComplete="current-password"
+            inputRef={register}
+            error={isPresent(errors.password)}
+            helperText={errors.password && 'Password is required'}
           />
-          <FormControlLabel
-            control={<Checkbox value="remember" color="primary" />}
-            label="Remember me"
-          />
+
           <Button
             type="submit"
             fullWidth
             variant="contained"
             color="primary"
             className={classes.submit}
+            disabled={!isValid}
           >
             Sign In
           </Button>
