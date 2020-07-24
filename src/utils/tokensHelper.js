@@ -2,7 +2,7 @@ import _ from 'lodash';
 import { isNilOrEmpty } from './helper';
 
 const MY_WEB_APP_TOKENS = 'my-web-app-tokens';
-const TOKENS = ['userName', 'accessToken', 'refreshToken'];
+const TOKENS = ['userEmail', 'accessToken'];
 
 export const getLocalStorageTokens = () => {
   const currentTokensString = localStorage.getItem(MY_WEB_APP_TOKENS);

@@ -2,7 +2,6 @@ import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { joiResolver } from '@hookform/resolvers';
-import Joi from '@hapi/joi';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
@@ -16,15 +15,7 @@ import Copyright from '../../components/Copyright';
 import SpinnerAdornment from '../../components/shared/SpinnerAdornment';
 import { useFormStyles } from '../../styles/formStyles';
 import { isPresent } from '../../utils/helper';
-
-const schema = Joi.object({
-  firstName: Joi.string().required(),
-  lastName: Joi.string().required(),
-  email: Joi.string()
-    .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } })
-    .required(),
-  password: Joi.string().required()
-});
+import { registerSchema } from '../../utils/validations/validationSchemas';
 
 const Register = () => {
   const classes = useFormStyles();
@@ -36,7 +27,7 @@ const Register = () => {
   } = useForm({
     mode: 'onBlur',
     reValidateMode: 'onChange',
-    resolver: joiResolver(schema)
+    resolver: joiResolver(registerSchema)
   });
 
   const onSubmit = (data) => {

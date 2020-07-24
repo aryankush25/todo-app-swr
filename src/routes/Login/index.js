@@ -1,8 +1,7 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { joiResolver } from '@hookform/resolvers';
-import Joi from '@hapi/joi';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
@@ -16,13 +15,7 @@ import Copyright from '../../components/Copyright';
 import SpinnerAdornment from '../../components/shared/SpinnerAdornment';
 import { useFormStyles } from '../../styles/formStyles';
 import { isPresent } from '../../utils/helper';
-
-const schema = Joi.object({
-  email: Joi.string()
-    .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } })
-    .required(),
-  password: Joi.string().required()
-});
+import { loginSchema } from '../../utils/validations/validationSchemas';
 
 const Login = () => {
   const classes = useFormStyles();
@@ -34,17 +27,17 @@ const Login = () => {
   } = useForm({
     mode: 'onBlur',
     reValidateMode: 'onChange',
-    resolver: joiResolver(schema)
+    resolver: joiResolver(loginSchema)
   });
 
-  const onSubmit = (data) => {
+  const onSubmit = useCallback((data) => {
     return new Promise((resolve) => {
       setTimeout(() => {
         resolve();
         console.log(data);
       }, 2000);
     });
-  };
+  }, []);
 
   return (
     <Container component="main" maxWidth="xs">
