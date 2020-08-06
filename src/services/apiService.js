@@ -141,10 +141,14 @@ async function handleNetworkCall(apiObject) {
     fetchObject.body = body;
   }
 
+  if (isNilOrEmpty(fetchObject.body)) {
+    delete fetchObject.body;
+  }
+
   if (isAuthenticationRequired) {
-    if (isNilOrEmpty(fetchObject.headers.authorization)) {
+    if (isNilOrEmpty(fetchObject.headers.Authorization)) {
       const { accessToken } = getLocalStorageTokens();
-      fetchObject.headers.authorization = `BEARER ${accessToken}`;
+      fetchObject.headers.Authorization = `Bearer ${accessToken}`;
     }
   }
 
