@@ -1,4 +1,5 @@
 import useSWR from 'swr';
+import { toast } from 'react-toastify';
 import { loginUser, getCurrentUser } from '../userServices';
 import * as API from '../api/usersApis';
 import { setLocalStorageTokens } from '../../utils/tokensHelper';
@@ -19,9 +20,11 @@ export const useLoginUserHook = () => {
         accessToken: response.token
       });
 
+      toast.success('Login successfull!');
+
       mutate({ ...response.user });
     } catch (error) {
-      console.log('error', error);
+      toast.error('Email/Password incorrect!');
     }
   };
 
