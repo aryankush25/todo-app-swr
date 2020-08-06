@@ -1,5 +1,5 @@
-import React from 'react';
-import { Link as RouterLink } from 'react-router-dom';
+import React, { useEffect, useCallback } from 'react';
+import { Link as RouterLink, useHistory } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { joiResolver } from '@hookform/resolvers';
 import Avatar from '@material-ui/core/Avatar';
@@ -16,8 +16,11 @@ import SpinnerAdornment from '../../components/shared/SpinnerAdornment';
 import { useFormStyles } from '../../styles/formStyles';
 import { isPresent } from '../../utils/helper';
 import { registerSchema } from '../../utils/validations/validationSchemas';
+import { useRegisterUserHook } from '../../services/hooks/userHooks';
+import { HOME_ROUTE } from '../../utils/routesConstants';
 
 const Register = () => {
+  const history = useHistory();
   const classes = useFormStyles();
   const {
     register,
@@ -30,14 +33,19 @@ const Register = () => {
     resolver: joiResolver(registerSchema)
   });
 
-  const onSubmit = (data) => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve();
-        console.log(data);
-      }, 2000);
-    });
-  };
+  const { user, startRegister } = useRegisterUserHook();
+
+  useEffect(() => {
+    if (user) {
+      history.push(HOME_ROUTE);
+    }
+  }, [history, user]);
+
+  const onSubmit = useCallback(
+    (data) =>
+      startRegister(data.firstName, data.lastName, data.email, data.password),
+    [startRegister]
+  );
 
   return (
     <Container component="main" maxWidth="xs">
