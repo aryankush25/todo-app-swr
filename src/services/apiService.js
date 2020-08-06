@@ -100,8 +100,8 @@ const responseHandler = async (response, resolve, reject) => {
 };
 
 function getBaseApiEndPoint() {
-  if (process.env.REACT_APP_USER_API_CALL) {
-    return process.env.REACT_APP_USER_API_CALL;
+  if (process.env.REACT_APP_API_URL) {
+    return process.env.REACT_APP_API_URL;
   }
 
   return '';

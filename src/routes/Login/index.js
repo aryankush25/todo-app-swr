@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { joiResolver } from '@hookform/resolvers';
@@ -16,6 +16,7 @@ import SpinnerAdornment from '../../components/shared/SpinnerAdornment';
 import { useFormStyles } from '../../styles/formStyles';
 import { isPresent } from '../../utils/helper';
 import { loginSchema } from '../../utils/validations/validationSchemas';
+import { useLoginUserHook } from '../../services/hooks/userHooks';
 
 const Login = () => {
   const classes = useFormStyles();
@@ -30,14 +31,18 @@ const Login = () => {
     resolver: joiResolver(loginSchema)
   });
 
-  const onSubmit = useCallback((data) => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve();
-        console.log(data);
-      }, 2000);
-    });
-  }, []);
+  const { user, startLogin } = useLoginUserHook();
+
+  useEffect(() => {
+    if (user) {
+      console.log('Redirect');
+    }
+  }, [user]);
+
+  const onSubmit = useCallback(
+    (data) => startLogin(data.email, data.password),
+    [startLogin]
+  );
 
   return (
     <Container component="main" maxWidth="xs">
