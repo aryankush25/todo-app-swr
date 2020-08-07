@@ -1,5 +1,5 @@
-import React, { useEffect, useCallback } from 'react';
-import { Link as RouterLink, useHistory } from 'react-router-dom';
+import React, { useCallback } from 'react';
+import { Link as RouterLink } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { joiResolver } from '@hookform/resolvers';
 import Avatar from '@material-ui/core/Avatar';
@@ -17,10 +17,8 @@ import { useFormStyles } from '../../styles/formStyles';
 import { isPresent } from '../../utils/helper';
 import { loginSchema } from '../../utils/validations/validationSchemas';
 import { useLoginUserHook } from '../../services/hooks/userHooks';
-import { HOME_ROUTE } from '../../utils/routesConstants';
 
 const Login = () => {
-  const history = useHistory();
   const classes = useFormStyles();
   const {
     register,
@@ -33,13 +31,7 @@ const Login = () => {
     resolver: joiResolver(loginSchema)
   });
 
-  const { user, startLogin } = useLoginUserHook();
-
-  useEffect(() => {
-    if (user) {
-      history.push(HOME_ROUTE);
-    }
-  }, [history, user]);
+  const { startLogin } = useLoginUserHook();
 
   const onSubmit = useCallback(
     (data) => startLogin(data.email, data.password),
