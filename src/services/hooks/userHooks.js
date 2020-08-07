@@ -1,13 +1,30 @@
 import useSWR from 'swr';
 import { toast } from 'react-toastify';
-import { createUser, loginUser, getCurrentUser } from '../userServices';
+import {
+  createUser,
+  loginUser,
+  getCurrentUser,
+  logoutUser
+} from '../userServices';
 import * as API from '../api/usersApis';
-import { setLocalStorageTokens } from '../../utils/tokensHelper';
+import {
+  setLocalStorageTokens,
+  clearLocalStorageTokens
+} from '../../utils/tokensHelper';
 
-export const useLoginUserHook = () => {
+export const useGetCurrentUserHook = () => {
   const { data, mutate } = useSWR(API.getCurrentUserEndPoint, getCurrentUser, {
     shouldRetryOnError: false
   });
+
+  return {
+    data,
+    mutate
+  };
+};
+
+export const useLoginUserHook = () => {
+  const { data, mutate } = useGetCurrentUserHook();
 
   const startLogin = async (email, password) => {
     try {
@@ -33,9 +50,7 @@ export const useLoginUserHook = () => {
 };
 
 export const useRegisterUserHook = () => {
-  const { data, mutate } = useSWR(API.getCurrentUserEndPoint, getCurrentUser, {
-    shouldRetryOnError: false
-  });
+  const { data, mutate } = useGetCurrentUserHook();
 
   const startRegister = async (firstName, lastName, email, password) => {
     try {
@@ -56,6 +71,29 @@ export const useRegisterUserHook = () => {
       mutate({ ...response.user });
     } catch (error) {
       toast.error('Unable to register!');
+    }
+  };
+
+  return {
+    user: data,
+    startRegister
+  };
+};
+
+export const useLogoutUserHook = () => {
+  const { data, mutate } = useGetCurrentUserHook();
+
+  const startRegister = async () => {
+    try {
+      await logoutUser(API.logoutUserEndPoint);
+
+      clearLocalStorageTokens();
+
+      toast.success('Logout successfull!');
+
+      mutate({});
+    } catch (error) {
+      toast.error('Unable to logout!');
     }
   };
 

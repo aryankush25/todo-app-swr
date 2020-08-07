@@ -24,12 +24,12 @@ export const loginUser = (endpoint, email, password) => {
   return ApiService(APIObj);
 };
 
-export const logoutUser = (endpoint) => {
+export const getCurrentUser = (endpoint) => {
   if (isPresentLocalStorageTokens()) {
     const APIObj = {
       endPoint: endpoint,
       authenticationRequired: true,
-      method: 'POST'
+      method: 'GET'
     };
 
     return ApiService(APIObj);
@@ -38,7 +38,7 @@ export const logoutUser = (endpoint) => {
   throw getArgumentNotPresentError();
 };
 
-export const getCurrentUser = (endpoint) => {
+export const logoutUser = (endpoint) => {
   if (isPresentLocalStorageTokens()) {
     const APIObj = {
       endPoint: endpoint,
