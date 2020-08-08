@@ -9,9 +9,6 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 
 const useStyles = makeStyles(() => ({
-  root: {
-    flexGrow: 1
-  },
   title: {
     flexGrow: 1
   }
