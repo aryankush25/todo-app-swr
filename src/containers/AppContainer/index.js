@@ -8,7 +8,6 @@ import { useLogoutUserHook } from '../../services/hooks/userHooks';
 
 const useStyles = makeStyles((theme) => ({
   mainContainer: {
-    minHeight: '100vh',
     display: 'flex',
     flexDirection: 'column'
   },
@@ -29,7 +28,7 @@ const AppContainer = ({ children }) => {
     <Box className={classes.mainContainer}>
       <MenuAppBar startLogout={startLogout} />
 
-      <Box className={classes.childrenContainer} mb={8}>
+      <Box className={classes.childrenContainer} pb={8}>
         {children}
       </Box>
 
