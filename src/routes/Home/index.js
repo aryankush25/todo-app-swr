@@ -1,52 +1,30 @@
 import React, { useState } from 'react';
 import Fab from '@material-ui/core/Fab';
 import AddIcon from '@material-ui/icons/Add';
+import Backdrop from '@material-ui/core/Backdrop';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import { makeStyles } from '@material-ui/core/styles';
 import AppContainer from '../../containers/AppContainer';
 import TodoList from './TodoList';
 import AddEditTodoDialog from './AddEditTodoDialog';
+import { useGetTasksHook } from '../../services/hooks/tasksHooks';
 
-const fakeTodoList = [
-  {
-    completed: true,
-    _id: '5ec2d41dc00f4900175dc818',
-    description: 'Hello I need to complete this app today.',
-    owner: '5ec2d0f6c00f4900175dc814',
-    createdAt: '2020-05-18T18:29:49.750Z',
-    updatedAt: '2020-06-18T19:44:47.230Z',
-    __v: 0
-  },
-  {
-    completed: false,
-    _id: '5ec2d41dc00f4900175dc818',
-    description: 'Hello I need to complete this app today.',
-    owner: '5ec2d0f6c00f4900175dc814',
-    createdAt: '2020-05-18T18:29:49.750Z',
-    updatedAt: '2020-06-18T19:44:47.230Z',
-    __v: 0
-  },
-  {
-    completed: true,
-    _id: '5ec2d41dc00f4900175dc818',
-    description: 'Hello I need to complete this app today.',
-    owner: '5ec2d0f6c00f4900175dc814',
-    createdAt: '2020-05-18T18:29:49.750Z',
-    updatedAt: '2020-06-18T19:44:47.230Z',
-    __v: 0
-  }
-];
-
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   floatingAddButton: {
     position: 'absolute',
     right: '25px',
     bottom: '25px'
+  },
+  backdrop: {
+    zIndex: theme.zIndex.drawer + 1
   }
 }));
 
 const Home = () => {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
+
+  const { tasks, isLoading } = useGetTasksHook();
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -58,7 +36,15 @@ const Home = () => {
 
   return (
     <AppContainer>
-      <TodoList todoList={fakeTodoList} />
+      <Backdrop className={classes.backdrop} open={isLoading}>
+        <CircularProgress />
+      </Backdrop>
+
+      {!isLoading && tasks.length !== 0 && <TodoList todoList={tasks} />}
+
+      {!isLoading && tasks.length === 0 && <div>No Todo Available</div>}
+
+      <AddEditTodoDialog open={open} handleClose={handleClose} />
 
       <Fab
         className={classes.floatingAddButton}
@@ -68,8 +54,6 @@ const Home = () => {
       >
         <AddIcon />
       </Fab>
-
-      <AddEditTodoDialog open={open} handleClose={handleClose} />
     </AppContainer>
   );
 };
