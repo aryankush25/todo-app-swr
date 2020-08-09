@@ -30,3 +30,32 @@ export const getTasks = (endpoint) => {
 
   throw getArgumentNotPresentError();
 };
+
+export const deleteTasks = (endpoint, taskId) => {
+  if (isPresentLocalStorageTokens()) {
+    const APIObj = {
+      endPoint: `${endpoint}/${taskId}`,
+      authenticationRequired: true,
+      method: 'DELETE'
+    };
+
+    return ApiService(APIObj);
+  }
+
+  throw getArgumentNotPresentError();
+};
+
+export const updateTasks = (endpoint, taskId, updatedData) => {
+  if (isPresentLocalStorageTokens()) {
+    const APIObj = {
+      endPoint: `${endpoint}/${taskId}`,
+      authenticationRequired: true,
+      method: 'PUT',
+      body: updatedData
+    };
+
+    return ApiService(APIObj);
+  }
+
+  throw getArgumentNotPresentError();
+};

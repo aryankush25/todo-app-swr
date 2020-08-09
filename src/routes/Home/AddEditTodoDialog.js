@@ -8,26 +8,39 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import { useAddTasksHook } from '../../services/hooks/tasksHooks';
 import SpinnerAdornment from '../../components/shared/SpinnerAdornment';
+import {
+  useAddTasksHook,
+  useUpdateTasksHook
+} from '../../services/hooks/tasksHooks';
+import { isPresent } from '../../utils/helper';
 
 const AddEditTodoDialog = ({
   open,
   handleClose,
   editModal = false,
   initialDescription = '',
-  initialCompleted = false
+  initialCompleted = false,
+  taskId = null
 }) => {
-  const [description, setDescription] = useState('');
-  const [completed, setCompleted] = useState(false);
-  const { isLoading, addTask } = useAddTasksHook();
+  const [description, setDescription] = useState(initialDescription);
+  const [completed, setCompleted] = useState(initialCompleted);
+  const { isLoading: isAddingTask, addTask } = useAddTasksHook();
+  const { isLoading: isUpdatingTask, updateTask } = useUpdateTasksHook();
+
+  const isLoading = isAddingTask || isUpdatingTask;
 
   useEffect(() => {
     if (editModal) {
       setDescription(initialDescription);
+    }
+  }, [editModal, initialDescription]);
+
+  useEffect(() => {
+    if (editModal) {
       setCompleted(initialCompleted);
     }
-  }, [editModal, initialCompleted, initialDescription]);
+  }, [editModal, initialCompleted]);
 
   const handleChangeDescription = (event) => {
     setDescription(event.target.value);
@@ -38,13 +51,13 @@ const AddEditTodoDialog = ({
   };
 
   const handleSave = async () => {
-    if (editModal) {
-      console.log({ description, completed });
+    if (editModal && isPresent(taskId)) {
+      await updateTask(taskId, { description });
     } else {
       await addTask(description, completed);
-
-      handleClose();
     }
+
+    handleClose();
   };
 
   return (
@@ -79,17 +92,19 @@ const AddEditTodoDialog = ({
           onChange={handleChangeDescription}
         />
 
-        <FormControlLabel
-          control={
-            <Checkbox
-              name="completed"
-              checked={completed}
-              disabled={isLoading}
-              onChange={handleChangeCompleted}
-            />
-          }
-          label="Completed"
-        />
+        {!editModal && (
+          <FormControlLabel
+            control={
+              <Checkbox
+                name="completed"
+                checked={completed}
+                disabled={isLoading}
+                onChange={handleChangeCompleted}
+              />
+            }
+            label="Completed"
+          />
+        )}
       </DialogContent>
 
       <DialogActions>
