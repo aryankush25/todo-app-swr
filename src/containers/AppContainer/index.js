@@ -13,7 +13,6 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column'
   },
   childrenContainer: {
-    flex: 1,
     display: 'flex',
     justifyContent: 'center'
   },
@@ -30,7 +29,9 @@ const AppContainer = ({ children }) => {
     <Box className={classes.mainContainer}>
       <MenuAppBar startLogout={startLogout} />
 
-      <Box className={classes.childrenContainer}>{children}</Box>
+      <Box className={classes.childrenContainer} mb={8}>
+        {children}
+      </Box>
 
       <Backdrop className={classes.backdrop} open={isLoading}>
         <CircularProgress />

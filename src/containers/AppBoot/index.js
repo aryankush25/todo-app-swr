@@ -14,10 +14,9 @@ const AppBoot = () => {
       <CssBaseline />
       <ToastContainer
         position="bottom-center"
-        autoClose={5000}
+        autoClose={3000}
         hideProgressBar
         newestOnTop={false}
-        closeOnClick={false}
         rtl={false}
         pauseOnFocusLoss={false}
         draggable
